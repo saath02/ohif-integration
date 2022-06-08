@@ -1,4 +1,4 @@
-# Google Cloud Platform Python Samples
+# Gradient GCP DEID
 
 Python samples for [Google Cloud Platform products][cloud].
 
