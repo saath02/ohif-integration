@@ -1,4 +1,4 @@
-sbucket = 'dicomsource1'
+sbucket = 'dicomsource2'
 dbucket = sbucket + "-deid"
 
 project_id = 'ohif-integration'  # replace with your GCP project ID
@@ -6,8 +6,11 @@ location = 'us-central1'  # replace with the dataset's location
 dataset_id = 'source'  # replace with the source dataset's ID
 destination_dataset_id = 'destination'  # replace with the destination dataset's ID
 dicom_store_id = 'store'
-content_uri = sbucket + "/**/*.dcm".format  # replace with a Cloud Storage bucket and DCM files
+content_uri = sbucket + str('/**.dcm')  # replace with a Cloud Storage bucket and DCM files
 
+from pprint import pprint
+from googleapiclient import discovery
+from oauth2client.client import GoogleCredentials
 from google.cloud import storage
 import time
 
@@ -126,7 +129,9 @@ def deidentify_dataset(project_id, location, dataset_id, destination_dataset_id)
     body = {
         "destinationDataset": destination_dataset,
         "config": {
-            "dicom": {},
+            "dicom": {
+                "skipIdRedaction":True,
+            },
             "image": {
                 "textRedactionMode": "REDACT_ALL_TEXT", ##Can change to only sensitive text
             }
@@ -203,14 +208,14 @@ def delete_dataset(project_id, location, dataset_id):
 if __name__ == "__main__":
     start = time.time()
 
-    create_bucket_class_location(dbucket)
-    import_dicom_instance(project_id, location, dataset_id, dicom_store_id, content_uri)
-    deidentify_dataset(project_id, location, dataset_id, destination_dataset_id)
-    export_dicom_instance(project_id, location, destination_dataset_id, dicom_store_id, 0)
-    delete_dataset(project_id, location, dataset_id)
-    delete_dataset(project_id, location, destination_dataset_id)
-    create_dataset(project_id, location, dataset_id)
-    create_dicom_store(project_id, location, dataset_id, dicom_store_id) ##Create dataset at end to reduce startup time
+    ##create_bucket_class_location(dbucket)
+    ##import_dicom_instance(project_id, location, dataset_id, dicom_store_id, content_uri)
+    ##deidentify_dataset(project_id, location, dataset_id, destination_dataset_id)
+    ##export_dicom_instance(project_id, location, destination_dataset_id, dicom_store_id, 0)
+    ##delete_dataset(project_id, location, dataset_id)
+    ##delete_dataset(project_id, location, destination_dataset_id)
+    ##create_dataset(project_id, location, dataset_id)
+    ##create_dicom_store(project_id, location, dataset_id, dicom_store_id) ##Create dataset at end to reduce startup time
 
     end = time.time()
     print(end - start)
